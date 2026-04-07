@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-kube-bot
+  namespace: discord-bot
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: discord-kube-bot
+  template:
+    metadata:
+      labels:
+        app: discord-kube-bot
+    spec:
+      serviceAccountName: discord-kube-bot
+      containers:
+        - name: bot
+          image: ghcr.io/pascariucosmin93/discord-boot:0.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-kube-bot-secrets
+                  key: DISCORD_TOKEN
+            - name: DISCORD_GUILD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: discord-kube-bot-secrets
+                  key: DISCORD_GUILD_ID
+            - name: DISCORD_ALLOWED_ROLE_IDS
+              valueFrom:
+                secretKeyRef:
+                  name: discord-kube-bot-secrets
+                  key: DISCORD_ALLOWED_ROLE_IDS
+            - name: KUBE_ALLOWED_NAMESPACES
+              valueFrom:
+                secretKeyRef:
+                  name: discord-kube-bot-secrets
+                  key: KUBE_ALLOWED_NAMESPACES
+            - name: DISCORD_AUDIT_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: discord-kube-bot-secrets
+                  key: DISCORD_AUDIT_WEBHOOK_URL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
