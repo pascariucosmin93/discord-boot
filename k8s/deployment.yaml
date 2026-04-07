@@ -17,7 +17,7 @@ spec:
       serviceAccountName: discord-kube-bot
       containers:
         - name: bot
-          image: ghcr.io/pascariucosmin93/discord-boot:0.0.1
+          image: ghcr.io/pascariucosmin93/discord-boot:0.0.2
           imagePullPolicy: IfNotPresent
           env:
             - name: DISCORD_TOKEN
