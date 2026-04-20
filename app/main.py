@@ -69,12 +69,21 @@ class KubeBot(discord.Client):
     async def setup_hook(self) -> None:
         guild = discord.Object(id=DISCORD_GUILD_ID) if DISCORD_GUILD_ID else None
         if guild:
-            self.tree.copy_global_to(guild=guild)
-            await self.tree.sync(guild=guild)
-            logger.info("Synced commands to guild %s", DISCORD_GUILD_ID)
+            try:
+                self.tree.copy_global_to(guild=guild)
+                await self.tree.sync(guild=guild)
+                logger.info("Synced commands to guild %s", DISCORD_GUILD_ID)
+                return
+            except discord.Forbidden:
+                logger.exception(
+                    "Guild sync failed for guild_id=%s (Missing Access). Falling back to global sync.",
+                    DISCORD_GUILD_ID,
+                )
         else:
-            await self.tree.sync()
-            logger.info("Synced global commands")
+            logger.info("DISCORD_GUILD_ID is not set. Using global command sync.")
+
+        await self.tree.sync()
+        logger.info("Synced global commands")
 
 
 bot = KubeBot()

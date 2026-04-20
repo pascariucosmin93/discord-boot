@@ -18,6 +18,10 @@ spec:
       containers:
         - name: bot
           image: ghcr.io/pascariucosmin93/discord-boot:0.0.2
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
           imagePullPolicy: IfNotPresent
           env:
             - name: DISCORD_TOKEN
